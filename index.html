@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+    <head>
+        <title>How to get data from MySQL with AngularJS - PHP</title>
+        <script src="angular.min.js"></script>
+        
+    </head>
+    <body ng-app='myapp'>
+
+        <div ng-controller="userCtrl">
+        
+            <table border="1">
+                
+                <tr>
+                    <th>id</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Username</th>
+                    <th></th>
+                </tr>
+                
+                <tr ng-repeat="user in users">
+                <td>{{user.id}}</td>
+                <td>{{user.fname}}</td>
+                <td>{{user.lname}}</td>
+                <td>{{user.username}}</td>
+                <td> </td>
+                </tr>
+                
+            </table>
+
+            <form>
+                <label for="id">ID: </label><br>
+                <input ng-model="users2.id" id="id" type="number" placeholder="id">
+                <br><br>
+                <label for="nombre">Nombre: </label><br>
+                <input  ng-model="users2.fname" id="nombre" type="text" placeholder="">
+                <br><br>
+                <label for="raza">apellidos: </label><br>
+                <input  ng-model="users2.lname" id="raza" type="text" placeholder="">
+                <br><br>
+                <label for="edad">username: </label><br>
+                <input ng-model="users2.username" id="edad" type="text" placeholder="">
+                <br><br>
+                <button ng-click="guardar()">Guardar</button>
+                <button ng-click="editar()">Editar</button>
+                <button ng-click="eliminar()">eliminar</button>
+                <pre>{{users2 | json}}</pre>
+            </form>
+    
+
+        </div>
+        
+        <!-- Script -->
+        <script>
+        var app = angular.module('myapp', []);
+
+        app.controller('userCtrl', ['$scope', '$http', function ($scope, $http) {
+            $scope.users2={};
+
+            $http({
+            method: 'get',
+            url: 'getData.php'
+            }).then(function successCallback(response) {
+                $scope.users = response.data;
+            });
+
+
+            $scope.guardar = function(){
+                
+				$http.post("./recibir.php", angular.toJson($scope.users2))
+				.then(function(respuesta){
+					/*
+						Esto se ejecuta si todo va bien. Podemos leer la respuesta
+						que nos dio el servidor accediendo a la propiedad data
+						Recordemos que tenemos que decodificarla, ya que si enviamos con JSON
+						deben respondernos con JSON (no es obligatorio, pero sí es una buena práctica)
+					*/
+					console.log("Peticion terminada. La respuesta es: ", angular.fromJson(respuesta.data));
+
+					/*
+						Finalmente "limpiamos" el formulario
+						estableciendo mascota a un objeto vacío
+					*/
+
+					$scope.users2 = {};
+				});
+            };
+            
+
+            $scope.editar = function(){
+				$http.post("./editar.php", angular.toJson($scope.users2))
+				.then(function(respuesta){
+                   
+                    /*
+						Esto se ejecuta si todo va bien. Podemos leer la respuesta
+						que nos dio el servidor accediendo a la propiedad data
+						Recordemos que tenemos que decodificarla, ya que si enviamos con JSON
+						deben respondernos con JSON (no es obligatorio, pero sí es una buena práctica)
+					*/
+					console.log("Peticion terminada. La respuesta es: ", angular.fromJson(respuesta.data));
+
+					/*
+						Finalmente "limpiamos" el formulario
+						estableciendo mascota a un objeto vacío
+					*/
+
+					$scope.users2 = {};
+				});
+			};
+
+           
+
+            $scope.eliminar = function(){
+				$http.post("./eliminar.php", angular.toJson($scope.users2))
+				.then(function(respuesta){
+                   
+                    /*
+						Esto se ejecuta si todo va bien. Podemos leer la respuesta
+						que nos dio el servidor accediendo a la propiedad data
+						Recordemos que tenemos que decodificarla, ya que si enviamos con JSON
+						deben respondernos con JSON (no es obligatorio, pero sí es una buena práctica)
+					*/
+					console.log("Peticion terminada. La respuesta es: ", angular.fromJson(respuesta.data));
+
+					/*
+						Finalmente "limpiamos" el formulario
+						estableciendo mascota a un objeto vacío
+					*/
+
+					$scope.users2 = {};
+				});
+			};
+
+        }]);
+
+        </script>
+    </body>
+
+</html>
